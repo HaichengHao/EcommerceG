@@ -101,7 +101,7 @@ def predict():
     predictor = Predictor(model, tokenizer, device)
 
     # 定义数据
-    text = ["麦德龙德国进口双心多维叶黄素护眼营养软胶囊30粒x3盒眼干涩","pvc水晶板软玻璃桌布防水桌子垫子透明加厚防烫塑料茶几垫餐桌垫"]
+    # text = ["麦德龙德国进口双心多维叶黄素护眼营养软胶囊30粒x3盒眼干涩","pvc水晶板软玻璃桌布防水桌子垫子透明加厚防烫塑料茶几垫餐桌垫"]
 
     # 测试预测
     # result = predictor.predict(text)
@@ -110,8 +110,9 @@ def predict():
     #     print(token, label)
 
     #tips:实体抽取方法_extract_entities写好了,直接用它来做实体抽取
-    entities = predictor.extract(text)
-    print(entities)
+    # entities = predictor.extract(text)
+    # print(entities)
+    return predictor
 
 if __name__ == '__main__':
     predict()

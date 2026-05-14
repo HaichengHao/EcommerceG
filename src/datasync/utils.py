@@ -2,7 +2,7 @@
 # @Author  : hero
 # @File    : utils.py
 import pymysql
-from pymysql.cursors import DictCursor
+from pymysql.cursors import DictCursor #important:用于将sql执行返回的数据转换为字典格式
 from neo4j import GraphDatabase
 from configuration.config import *
 from loguru import logger

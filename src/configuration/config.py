@@ -22,7 +22,7 @@ CHECKPOINT_DIR = ROOT_DIR / "checkpoints"
 RAW_DATA_FILE=str(RAW_DATA_DIR/ "data.json")
 # MODEL_NAME='google-bert/bert-base-chinese'
 MODEL_NAME='/home/nikofox/.cache/huggingface/hub/models--google-bert--bert-base-chinese/snapshots/8f23c25b06e129b6c986331a13d8d025a92cf0ea'
-
+EMBEDDING_MODEL='/home/nikofox/.cache/huggingface/hub/models--BAAI--bge-large-zh-v1.5/snapshots/79e7739b6ab944e86d6171e44d24c997fc1e0116'
 
 #3.本次适用HuggingFace的trainer,那么参数有一些就不需要自己设置了,这里只设置几个超参数
 '''
@@ -68,3 +68,6 @@ NEO4J_CONFIG={
     'uri':'neo4j://127.0.0.1:7687',
     'auth':AUTH
 }
+
+#WEB静态资源目录
+WEB_STATS_DIR=ROOT_DIR / 'src' / 'web' /'static'
