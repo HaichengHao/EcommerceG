@@ -2,336 +2,469 @@
 <html lang="zh-CN">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>电商智能客服</title>
-    <script src="/static/marked.min.js"></script>
-    <script src="/static/purify.min.js"></script>
-    <style>
-        :root {
-            --border-radius: 16px;
-            --primary-color: #3b82f6;
-            --background-color: #f8f7f6;
-            --shadow-color: #00000056;
-            --input-box-bg-color: #ffffffcb;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcommerceG 助手</title>
+  <script src="/static/marked.min.js"></script>
+  <script src="/static/purify.min.js"></script>
+  <style>
+    :root {
+      --bg: #f2efe8;
+      --panel: #fffdf8;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --brand: #c2410c;
+      --brand-soft: #ffedd5;
+      --line: #eadbc8;
+      --user: #1f2937;
+      --user-text: #f8fafc;
+      --bot: #fff7ed;
+      --radius: 14px;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Consolas", "微软雅黑", sans-serif;
-        }
+    * { box-sizing: border-box; }
 
-        body {
-            min-height: 100vh;
-            background-color: var(--background-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-y: auto;
-        }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Avenir Next", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 10%, #fde68a 0%, transparent 30%),
+        radial-gradient(circle at 90% 80%, #fecaca 0%, transparent 28%),
+        var(--bg);
+    }
 
-        #dialog-area {
-            flex: 1;
-            width: 100%;
-            max-width: 900px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-        }
+    .layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      min-height: 100vh;
+    }
 
-        .message-bubble {
-            display: inline-flex;
-            margin-bottom: 16px;
-            padding: 12px;
-            border-radius: var(--border-radius);
-            font-size: 16px;
-            line-height: 1.5;
-            word-break: break-word;
-            /* white-space: pre-wrap; */
-        }
+    .sidebar {
+      border-right: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff8f0 0%, #fffdf8 100%);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
 
-        .new-message {
-            animation: messageAppear 0.3s ease;
-        }
+    .brand {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
 
-        @keyframes messageAppear {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
+    .new-chat-btn {
+      border: none;
+      background: var(--brand);
+      color: #fff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .2s ease;
+    }
 
-            to {
-                opacity: 1;
-                transform: none;
-            }
-        }
+    .new-chat-btn:hover { transform: translateY(-1px); }
 
-        .user-message {
-            background-color: var(--primary-color);
-            align-self: flex-end;
-            color: white;
-            box-shadow: 0 2px 4px var(--shadow-color);
-        }
+    .session-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow: auto;
+      padding-right: 2px;
+    }
 
-        .bot-message {
-            align-self: flex-start;
-            color: black;
-        }
+    .session-item {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all .2s ease;
+    }
 
-        .input-box {
-            width: 100%;
-            max-width: 900px;
-            padding: 16px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 8px var(--shadow-color);
-            position: sticky;
-            bottom: 16px;
-            transition: all 0.3s ease;
-            background-color: var(--input-box-bg-color);
-            border: 2px solid transparent;
+    .session-item.active {
+      background: var(--brand-soft);
+      border-color: #fdba74;
+    }
 
-            &:hover {
-                box-shadow: 0 4px 8px var(--primary-color);
-            }
+    .session-title {
+      font-size: 14px;
+      color: var(--ink);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 170px;
+    }
 
-            &:focus-within {
-                border: 2px solid var(--primary-color);
-            }
-        }
+    .del-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #9a3412;
+      border-radius: 8px;
+      font-size: 12px;
+      padding: 4px 6px;
+      cursor: pointer;
+    }
 
-        #user-input {
-            width: 100%;
-            padding: 8px;
-            font-size: 16px;
-            max-height: 200px;
-            overflow-y: auto;
-            resize: none;
-            border: none;
-            outline: none;
-            background-color: #ffffff00;
-        }
+    .main {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
 
-        #send-btn {
-            padding: 8px 16px;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-left: auto;
-            display: block;
-            background-color: var(--primary-color);
+    .chat-head {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--line);
+      background: #fffdf8cc;
+      backdrop-filter: blur(6px);
+      position: sticky;
+      top: 0;
+      z-index: 3;
+    }
 
-            &:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px var(--shadow-color);
-            }
+    .chat-title { font-size: 18px; font-weight: 700; }
 
-            &:active {
-                transform: translateY(0);
-            }
+    #dialog-area {
+      flex: 1;
+      overflow: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
 
-            &:disabled {
-                background-color: #cccccc;
-                cursor: not-allowed;
-                transform: none !important;
-                box-shadow: none !important;
-            }
-        }
+    .message {
+      max-width: min(820px, 90%);
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      line-height: 1.6;
+      animation: rise .25s ease;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
 
-        .loading-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        .loader {
-            width: 30px;
-            height: 30px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+    .user-message {
+      align-self: flex-end;
+      background: var(--user);
+      color: var(--user-text);
+    }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
+    .bot-message {
+      align-self: flex-start;
+      background: var(--bot);
+      border: 1px solid #fed7aa;
+    }
 
-            100% {
-                transform: rotate(360deg);
-            }
-        }
+    .input-wrap {
+      border-top: 1px solid var(--line);
+      background: #fffdf8;
+      padding: 14px 18px;
+    }
 
-        .markdown-content {
-            max-width: 100%;
-            overflow-x: auto;
-        }
+    .input-box {
+      max-width: 980px;
+      margin: 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 10px 26px rgba(120, 53, 15, 0.08);
+      padding: 10px;
+    }
 
-        .markdown-content br {
-            display: none;
-        }
+    #user-input {
+      width: 100%;
+      border: none;
+      resize: none;
+      outline: none;
+      font-size: 15px;
+      line-height: 1.5;
+      max-height: 180px;
+      min-height: 40px;
+      font-family: inherit;
+      color: var(--ink);
+    }
 
-        .markdown-content h1,
-        .markdown-content h2,
-        .markdown-content h3 {
-            margin: 1em 0 0.5em;
-            color: var(--primary-color);
-        }
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-top: 8px;
+      gap: 10px;
+    }
 
-        .markdown-content p {
-            margin: 0.5em 0;
-            line-height: 1.6;
-        }
+    .send-btn {
+      border: none;
+      background: var(--brand);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
 
-        .markdown-content ul,
-        .markdown-content ol {
-            margin: 0.5em 0;
-            padding-left: 2em;
-        }
+    .send-btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
 
-        .markdown-content code {
-            background-color: rgba(192, 192, 192, 0.2);
-            padding: 0.2em 0.4em;
-            border-radius: 4px;
-            font-family: Consolas, monospace;
-        }
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+    }
 
-        .markdown-content pre {
-            background-color: #f6f8fa;
-            padding: 1em;
-            border-radius: var(--border-radius);
-            overflow-x: auto;
-            margin: 1em 0;
-        }
+    .markdown-content p { margin: 0.3em 0; }
+    .markdown-content code { background: #f1f5f9; padding: 0.15em 0.35em; border-radius: 4px; }
+    .markdown-content pre { background: #111827; color: #e5e7eb; padding: 10px; border-radius: 10px; overflow: auto; }
 
-        .markdown-content pre code {
-            background: none;
-            padding: 0;
-        }
-    </style>
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { border-right: none; border-bottom: 1px solid var(--line); }
+      #dialog-area { padding: 16px; }
+      .message { max-width: 100%; }
+    }
+  </style>
 </head>
 
 <body>
-    <div id="dialog-area">
-        <div class="bot-message message-bubble">您好！我是电商智能客服，请问有什么需要我帮忙的？</div>
-    </div>
-    <div class="input-box">
-        <textarea id="user-input" placeholder="需要我做什么？"></textarea>
-        <button id="send-btn" onclick="sendMessage()">发送</button>
-    </div>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">EcommerceG Assistant</div>
+      <button class="new-chat-btn" id="new-chat-btn">+ 新建会话</button>
+      <div class="session-list" id="session-list"></div>
+    </aside>
 
-    <script>
-        const dialogArea = document.getElementById('dialog-area');
-        const input = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
-        const loadingBubble = createLoadingBubble();
-        marked.setOptions({
-            breaks: false,
-            highlight: function (code) {
-                return hljs.highlightAuto(code).value;
-            }
+    <main class="main">
+      <div class="chat-head">
+        <div class="chat-title" id="chat-title">会话</div>
+      </div>
+
+      <div id="dialog-area"></div>
+
+      <div class="input-wrap">
+        <div class="input-box">
+          <textarea id="user-input" placeholder="输入问题，回车发送，Shift+Enter 换行"></textarea>
+          <div class="actions">
+            <span class="hint">会话已隔离存储在 Redis</span>
+            <button class="send-btn" id="send-btn">发送</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const dialogArea = document.getElementById('dialog-area');
+    const input = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    const sessionListEl = document.getElementById('session-list');
+    const newChatBtn = document.getElementById('new-chat-btn');
+    const chatTitleEl = document.getElementById('chat-title');
+
+    let currentSessionId = null;
+    let sessions = [];
+
+    marked.setOptions({ breaks: false });
+
+    function scrollBottom() {
+      dialogArea.scrollTop = dialogArea.scrollHeight;
+    }
+
+    function renderMarkdown(el, text) {
+      const dirty = marked.parse(text || '');
+      el.innerHTML = DOMPurify.sanitize(dirty, {
+        ADD_TAGS: ['iframe'],
+        ADD_ATTR: ['allowfullscreen']
+      });
+    }
+
+    function createMessage(content, role) {
+      const bubble = document.createElement('div');
+      bubble.className = `message ${role === 'user' ? 'user-message' : 'bot-message'}`;
+      if (role === 'user') {
+        bubble.textContent = content;
+      } else {
+        const m = document.createElement('div');
+        m.className = 'markdown-content';
+        renderMarkdown(m, content);
+        bubble.appendChild(m);
+      }
+      dialogArea.appendChild(bubble);
+      scrollBottom();
+      return bubble;
+    }
+
+    async function loadSessions() {
+      const res = await fetch('/api/sessions');
+      const data = await res.json();
+      sessions = data.sessions || [];
+
+      if (!sessions.length) {
+        const created = await createSession();
+        sessions = [created];
+      }
+
+      renderSessionList();
+
+      if (!currentSessionId || !sessions.find(s => s.session_id === currentSessionId)) {
+        await switchSession(sessions[0].session_id);
+      }
+    }
+
+    function renderSessionList() {
+      sessionListEl.innerHTML = '';
+      sessions.forEach(session => {
+        const item = document.createElement('div');
+        item.className = `session-item ${session.session_id === currentSessionId ? 'active' : ''}`;
+
+        const title = document.createElement('div');
+        title.className = 'session-title';
+        title.textContent = session.title || '新会话';
+
+        const del = document.createElement('button');
+        del.className = 'del-btn';
+        del.textContent = '删除';
+        del.onclick = async (e) => {
+          e.stopPropagation();
+          await deleteSession(session.session_id);
+        };
+
+        item.appendChild(title);
+        item.appendChild(del);
+        item.onclick = () => switchSession(session.session_id);
+        sessionListEl.appendChild(item);
+      });
+    }
+
+    async function createSession() {
+      const res = await fetch('/api/sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: '新会话' })
+      });
+      return await res.json();
+    }
+
+    async function deleteSession(sessionId) {
+      await fetch(`/api/sessions/${sessionId}`, { method: 'DELETE' });
+      sessions = sessions.filter(s => s.session_id !== sessionId);
+
+      if (!sessions.length) {
+        const created = await createSession();
+        sessions = [created];
+      }
+
+      if (currentSessionId === sessionId) {
+        currentSessionId = sessions[0].session_id;
+      }
+
+      renderSessionList();
+      await switchSession(currentSessionId);
+    }
+
+    async function switchSession(sessionId) {
+      currentSessionId = sessionId;
+      renderSessionList();
+
+      const target = sessions.find(s => s.session_id === sessionId);
+      chatTitleEl.textContent = target?.title || '会话';
+
+      dialogArea.innerHTML = '';
+      const res = await fetch(`/api/sessions/${sessionId}/messages`);
+      const data = await res.json();
+      const messages = data.messages || [];
+
+      if (!messages.length) {
+        createMessage('您好，我是电商图谱助手。当前会话已隔离，您可以放心提问。', 'assistant');
+        return;
+      }
+
+      messages.forEach(msg => createMessage(msg.content, msg.role));
+    }
+
+    async function sendMessage() {
+      const message = input.value.trim();
+      if (!message || !currentSessionId) return;
+
+      sendBtn.disabled = true;
+      createMessage(message, 'user');
+      input.value = '';
+      input.style.height = 'auto';
+
+      const botBubble = document.createElement('div');
+      botBubble.className = 'message bot-message';
+      const botMd = document.createElement('div');
+      botMd.className = 'markdown-content';
+      botBubble.appendChild(botMd);
+      dialogArea.appendChild(botBubble);
+      scrollBottom();
+
+      let responseText = '';
+      try {
+        const response = await fetch('/api/chat/stream', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message, session_id: currentSessionId })
         });
 
-        // 发送消息
-        async function sendMessage() {
-            // 获取用户输入
-            const message = input.value.trim();
-            if (!message) return;
-            // 禁用发送按钮
-            sendBtn.disabled = true;
-            // 发送消息
-            addMessage(message, true);
-            // 清空输入框并恢复高度
-            input.value = '';
-            input.style.height = 'auto';
-            // 添加加载状态
-            dialogArea.appendChild(loadingBubble);
-            window.scrollTo(0, document.body.scrollHeight);
-            // 获取回复
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: message })
-                });
-                const data = await response.json();
-                responseContent = data.message;
-            } catch (error) {
-                responseContent = '系统暂时无法响应，请稍后再试😥';
-            }
-            // 移除加载状态
-            loadingBubble.remove();
-            // 发送回复消息
-            if (responseContent != null) {
-                addMessage(responseContent, false);
-            }
-            // 启用发送按钮
-            sendBtn.disabled = false;
+        if (!response.ok || !response.body) throw new Error('stream error');
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          if (chunk) {
+            responseText += chunk;
+            botMd.textContent = responseText;
+            scrollBottom();
+          }
         }
+      } catch (err) {
+        responseText = '系统暂时无法响应，请稍后再试。';
+      }
 
-        // 自动调整输入框高度
-        document.getElementById('user-input').addEventListener('input', () => {
-            input.style.height = 'auto';
-            input.style.height = Math.min(input.scrollHeight, 200) + 'px';
-        });
+      renderMarkdown(botMd, responseText);
+      sendBtn.disabled = false;
 
-        // 监听回车键
-        document.getElementById('user-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
+      await loadSessions();
+    }
 
-        // 创建加载状态的气泡
-        function createLoadingBubble() {
-            const bubble = document.createElement('div');
-            bubble.classList.add('message-bubble', 'bot-message', 'new-message');
-            const loadingContainer = document.createElement('div');
-            loadingContainer.className = 'loading-container';
-            const loader = document.createElement('div');
-            loader.className = 'loader';
-            loadingContainer.appendChild(loader);
-            loadingContainer.appendChild(document.createTextNode('正在思索中...'));
-            bubble.appendChild(loadingContainer);
-            return bubble;
-        }
+    input.addEventListener('input', () => {
+      input.style.height = 'auto';
+      input.style.height = `${Math.min(input.scrollHeight, 180)}px`;
+    });
 
-        // 添加消息气泡
-        function addMessage(content, isUser) {
-            const bubble = document.createElement('div');
-            // 设置气泡样式
-            bubble.classList.add('message-bubble', isUser ? 'user-message' : 'bot-message', 'new-message');
-            // 如果传入的是字符串则创建文本
-            if (!isUser) {
-                // 机器人回复转换为markdown格式
-                const markdownContainer = document.createElement('div');
-                markdownContainer.className = 'markdown-content';
-                const dirty = marked.parse(content.toString());
-                markdownContainer.innerHTML = DOMPurify.sanitize(dirty, {
-                    ADD_TAGS: ["iframe"],
-                    ADD_ATTR: ["allowfullscreen"]
-                });
-                bubble.appendChild(markdownContainer);
-            } else {
-                bubble.textContent = content;
-            }
-            // 添加气泡动态效果
-            bubble.addEventListener('animationend', function handler() {
-                this.classList.remove('new-message');
-                this.removeEventListener('animationend', handler);
-            });
-            // 对话框添加气泡
-            dialogArea.appendChild(bubble);
-            window.scrollTo(0, document.body.scrollHeight);
-        }
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
 
-    </script>
+    sendBtn.addEventListener('click', sendMessage);
+    newChatBtn.addEventListener('click', async () => {
+      const created = await createSession();
+      sessions.unshift(created);
+      renderSessionList();
+      await switchSession(created.session_id);
+    });
+
+    loadSessions();
+  </script>
 </body>
 
 </html>
